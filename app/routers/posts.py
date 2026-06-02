@@ -1,0 +1,62 @@
+from fastapi import APIRouter, Depends, HTTPException
+from ..database import get_db
+from .auth import get_current_user
+from typing import Annotated
+from sqlalchemy.orm import Session
+from ..models import User, Post
+from ..schemas import new_post
+
+
+router = APIRouter(prefix="/posts",
+                   tags=["posts"])
+db_dependency = Annotated [Session, Depends(get_db)]
+jwt_depencency = Annotated[dict, Depends(get_current_user)]
+
+@router.get('/all_posts')
+async def all_posts(user:jwt_depencency, db:db_dependency):
+    if user is None:
+        raise HTTPException (status_code=401, detail= "User is not authenticated.")
+    all_post = db.query(Post).all()
+    return all_post
+
+@router.get('/{post_id}')
+async def get_post(post_id:int, user:jwt_depencency,db:db_dependency):
+    if user is None:
+        raise HTTPException (status_code=401, detail= "User is not authenticated.")
+    post_obj = db.query(Post).filter(Post.id==post_id, user.get('id')==Post.owner_id).first()
+    if post_obj is None:
+        raise HTTPException (status_code= 404, detail="Post is not found")
+    return post_obj
+@router.post('/create_post')
+async def create_post(post:new_post, user:jwt_depencency, db:db_dependency):
+    if user is None:
+        raise HTTPException (status_code=401, detail= "User is not authenticated.")
+    post = Post(**post.model_dump(),owner_id = user.get('id'))
+    db.add(post)
+    db.commit()
+    db.refresh(post)
+
+@router.put('/update_post/{post_id}', status_code=200)
+async def update_post(post_id:int,update:new_post,user:jwt_depencency, db:db_dependency):
+    if user is None:
+        raise HTTPException (status_code=401, detail= "Authentication is required")
+    post_obj = db.query(Post). filter(post_id==Post.id, user.get('id')==Post.owner_id).first()
+    if post_obj is None:
+        raise HTTPException(status_code=404, detail="Post is not found")
+    post_obj.content = update.content
+    post_obj.title=update.title
+    db.commit()
+    db.refresh(post_obj)
+    return post_obj
+
+@router.delete("/delete_post/{post_id}")
+async def delete_post(post_id:int, user:jwt_depencency, db:db_dependency):
+    if user is None:
+        raise HTTPException (status_code=401, detail= "Authentication is required")
+    post_obj = db.query(Post).filter(Post.id == post_id, Post.owner_id == user.get("id")).first()
+    if post_obj is None:
+        raise HTTPException(status_code=404, detail="Post is not found")
+    db.delete(post_obj)
+    db.commit()
+    return {"message": "Post deleted successfully"}
+

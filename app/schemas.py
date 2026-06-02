@@ -6,3 +6,8 @@ class new_user(BaseModel):
     username:str
     email: str
     password: str
+
+
+class new_post(BaseModel):
+    title:str
+    content:str
