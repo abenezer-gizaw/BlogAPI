@@ -33,3 +33,16 @@ class Post(Base):
     owner_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("User", back_populates="posts")
+    comments = relationship("Comment", back_populates="post", cascade="all, delete")
+
+class Comment(Base):
+    __tablename__ = "comments"
+
+    id = Column(Integer, primary_key=True, index=True)
+    content = Column(String, nullable=False)
+
+    user_id = Column(Integer, ForeignKey("users.id"))
+    post_id = Column(Integer, ForeignKey("posts.id"))
+
+    user = relationship("User")
+    post = relationship("Post", back_populates="comments")

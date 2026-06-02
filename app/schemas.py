@@ -11,3 +11,14 @@ class new_user(BaseModel):
 class new_post(BaseModel):
     title:str
     content:str
+
+class CommentCreate(BaseModel):
+    content: str
+
+
+class CommentResponse(BaseModel):
+    id: int
+    content: str
+
+    class Config:
+        from_attributes = True
