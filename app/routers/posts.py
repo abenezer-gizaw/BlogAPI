@@ -29,20 +29,12 @@ async def all_posts(user: jwt_depencency, db: db_dependency):
     result = []
 
     for post in posts:
-        likes_count = (
-            db.query(Like)
-            .filter(Like.post_id == post.id)
-            .count()
-        )
+        likes_count = (db.query(Like).filter(Like.post_id == post.id).count())
 
-        result.append({
-            "id": post.id,
-            "title": post.title,
-            "author": post.owner.username,
-            "comments": post.comments,
-            "likes_count": likes_count
-        })
-        return result
+        result.append(
+        PostResponse(id=post.id,title=post.title,author=post.owner.username,comments=post.comments,likes_count=likes_count)
+)
+    return result
     
 
 @router.get('/{post_id}', response_model= PostResponse)
