@@ -12,7 +12,8 @@ router = APIRouter(prefix="/posts",
 db_dependency = Annotated [Session, Depends(get_db)]
 jwt_depencency = Annotated[dict, Depends(get_current_user)]
 
-@router.get('/all_posts', response_model= list[PostResponse])
+@router.get('/all_posts', response_model= list[PostResponse], status_code= 200)
+
 async def all_posts(user: jwt_depencency, db: db_dependency):
     if user is None:
         raise HTTPException(status_code=401, detail="User is not authenticated.")
@@ -63,7 +64,7 @@ async def get_post(post_id:int, user:jwt_depencency,db:db_dependency):
         comments=post.comments,
         likes_count=likes_count
     )
-@router.post('/create_post')
+@router.post('/create_post', status_code= 204)
 async def create_post(post:new_post, user:jwt_depencency, db:db_dependency):
     if user is None:
         raise HTTPException (status_code=401, detail= "User is not authenticated.")

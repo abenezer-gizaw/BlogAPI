@@ -15,6 +15,15 @@ class new_post(BaseModel):
 class CommentCreate(BaseModel):
     content: str
 
+class UserResponse(BaseModel):
+    id: int
+    username: str
+    email:str
+
+    model_config = {
+        "from_attributes": True
+    }
+
 class CommentUser(BaseModel):
     id: int
     username: str

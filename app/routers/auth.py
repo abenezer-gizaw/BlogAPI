@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, status, Depends
-from ..schemas import new_user
+from ..schemas import new_user, UserResponse
 from ..database import get_db
 from ..models import User
 from typing import Annotated
@@ -52,10 +52,13 @@ def get_current_user (token:str =Depends(oauth2_scheme)):
          raise HTTPException(status_code=401, detail= 'Unauthorized user')
 
 
-@router.get('/', status_code= status.HTTP_200_OK)
+@router.get('/', response_model= list[UserResponse], status_code= status.HTTP_200_OK)
 async def get_all_users(db:db_dependency):
     user = db.query(User).all()
-    return user
+    user_list=[]
+    for each in user:
+        user_list.append (UserResponse (id = each.id,username = each.username, email = each.email))
+    return user_list
 
 @router.post('/create_new', status_code= status.HTTP_204_NO_CONTENT)
 async def create_new(user_input:new_user, db:db_dependency):

@@ -12,6 +12,6 @@ app.include_router(posts.router)
 app.include_router(comments.router)
 app.include_router(likes.router)
 
-@app.get('/')
+@app.get('/', status_code= 200)
 async def testing_setup():
     return{'message': 'setup all good'}
