@@ -1,3 +1,4 @@
+import os
 from fastapi import APIRouter, HTTPException, status, Depends
 from ..schemas import new_user, UserResponse
 from ..database import get_db
@@ -9,11 +10,15 @@ from jose import jwt, JWTError
 from datetime import datetime, timedelta, timezone
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 router = APIRouter(
     prefix="/auth",
     tags=['auth']
 )
-SECRET_KEY= 'JBDFKJABFI47789@5'
+SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM ="HS256"
 
 db_dependency = Annotated [Session, Depends(get_db)]
