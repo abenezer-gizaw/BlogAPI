@@ -1,5 +1,4 @@
 # BlogAPI
-# BlogAPI 📝
 
 A production-ready **FastAPI blogging platform** with user authentication, posts, comments, and likes. Demonstrates core backend skills: REST API design, database relationships, ORM optimization, nested JSON responses, and testing.
 
@@ -29,7 +28,7 @@ BlogAPI/
 ├── requirements.txt
 └── README.md
 
-## 🚀 Quick Start
+## Quick Start
 
 1. **Clone & Setup**
    ```bash
@@ -51,9 +50,9 @@ BlogAPI/
    uvicorn app.main:app --reload
    ```
 
-📚 **API Docs:** http://localhost:8000/docs
+ **API Docs:** http://localhost:8000/docs
 
-## 📚 Main API Endpoints
+## Main API Endpoints
 
 | Endpoint | Method | Auth | Description |
 |----------|--------|------|-------------|
@@ -193,49 +192,66 @@ GET /posts/1
 }
 ```
 
-## 📦 Pydantic Response Models
+## Pydantic Response Models
 
 ### Schemas (Response Models)
 
 ```python
 # schemas.py
 
-# Base schemas (for input validation)
-class UserBase(BaseModel):
-    username: str
+class new_user(BaseModel):
+    first_name:str
+    last_name:str
+    username:str
     email: str
+    password: str
 
-class PostBase(BaseModel):
-    title: str
+
+class new_post(BaseModel):
+    title:str
+    content:str
+
+class CommentCreate(BaseModel):
     content: str
 
-# Response schemas (for output formatting)
-class UserOut(UserBase):
+class UserResponse(BaseModel):
     id: int
+    username: str
+    email:str
+
+    model_config = {
+        "from_attributes": True
+    }
+
+class CommentUser(BaseModel):
+    id: int
+    username: str
+
+    model_config = {
+        "from_attributes": True
+    }
+
+
+class CommentResponse(BaseModel):
+    id: int
+    content: str
+    user: CommentUser
+
     class Config:
         from_attributes = True
 
-class CommentOut(BaseModel):
-    id: int
-    content: str
-    user: UserOut  # Nested user object
+class LikeRequest(BaseModel):
+    post_id: int
     
-    class Config:
-        from_attributes = True
-
-class PostOut(BaseModel):
+class PostResponse(BaseModel):
     id: int
     title: str
-    content: str
-    owner: UserOut  # Nested owner
-    comments: List[CommentOut]  # Nested list of comments
-    likes: int
-    
-    class Config:
-        from_attributes = True
+    author: str
+    comments: list[CommentResponse]
+    likes_count: int
 
-class PostCreate(PostBase):
-    pass
+    model_config = {"from_attributes": True}
+
 ```
 
 **Benefits of Pydantic Response Models:**
@@ -245,8 +261,6 @@ class PostCreate(PostBase):
 - Documentation - FastAPI auto-generates API docs
 - Field exclusion - hide sensitive fields
 - Config options - control serialization behavior
-
-### Accessing Relationships
 
 ## Testing
 
@@ -278,26 +292,29 @@ pytest==9.0.3
 python-dotenv==1.2.2
 ```
 
-## ✨ What I Learned
+## What I Learned
 
-- ✅ One-to-many database relationships
-- ✅ Many-to-many relationships (composite keys)
-- ✅ SQLAlchemy relationship() & back_populates
-- ✅ Cascade delete for data integrity
-- ✅ Database indexing for performance
-- ✅ Nested JSON response design
-- ✅ Pydantic response models & validation
-- ✅ RESTful API best practices
-- ✅ JWT authentication flow
-- ✅ Unit testing with pytest
+- One-to-many database relationships
+-  Many-to-many relationships (composite keys)
+- SQLAlchemy relationship() & back_populates
+- Cascade delete for data integrity
+- Database indexing for performance
+- Nested JSON response design
+- Pydantic response models & validation
+- RESTful API best practices
+- JWT authentication flow
+- Unit testing with pytest
 
-## 🚀 Deployment
+## Deployment
 
 - PostgreSQL hosted on **Neon**
 - Set `DATABASE_URL` in production environment
 - Tables created automatically on startup
 - Indexes optimize query performance
 
-## 👨‍💻 Author
+## Live Demo:
+- **API Documentation (Swagger):**  https://blogapi-production-7258.up.railway.app
+
+## Author
 
 **Abenezer Gizaw** - [@abenezer-gizaw](https://github.com/abenezer-gizaw)
