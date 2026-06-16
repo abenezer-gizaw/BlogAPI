@@ -38,7 +38,7 @@ async def all_posts(user: jwt_depencency, db: db_dependency):
     return result
     
 
-@router.get('/{post_id}', response_model= PostResponse)
+@router.get('/{post_id}', response_model= PostResponse, status_code= 200)
 async def get_post(post_id:int, user:jwt_depencency,db:db_dependency):
     if user is None:
         raise HTTPException(status_code=401, detail="Not authenticated")
@@ -86,7 +86,7 @@ async def update_post(post_id:int,update:new_post,user:jwt_depencency, db:db_dep
     db.refresh(post_obj)
     return post_obj
 
-@router.delete("/delete_post/{post_id}")
+@router.delete("/delete_post/{post_id}", status_code=204)
 async def delete_post(post_id:int, user:jwt_depencency, db:db_dependency):
     if user is None:
         raise HTTPException (status_code=401, detail= "Authentication is required")

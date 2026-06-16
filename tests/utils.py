@@ -4,7 +4,7 @@ from sqlalchemy.pool import StaticPool # this is new importing the sqlalchemy po
 from fastapi.testclient import TestClient
 from app.database import Base
 import pytest
-from app.models import User, Post
+from app.models import User, Post, Comment, Like
 from app.main import app
 from passlib.context import CryptContext
 
@@ -68,5 +68,35 @@ def add_post(add_user):
     yield post
 
     db.query(Post).delete()
+    db.commit()
+    db.close()
+
+@pytest.fixture
+def add_comment(add_user, add_post):
+    db = TestSessionLocal()
+    add_comment = Comment(content="Test comment", user_id = add_user.id, post_id= add_post.id)
+    db.add(add_comment)
+    db.commit()
+    db.refresh(add_comment)
+
+    yield add_comment
+    
+    db.query(Comment).delete()
+    db.commit()
+    db.close()
+
+@pytest.fixture
+def add_like(add_user, add_post):
+    db = TestSessionLocal()
+    db.query(Like).delete()
+    db.commit()
+
+    add_like = Like(user_id = add_user.id, post_id = add_post.id)
+    db.add(add_like)
+    db.commit()
+    db.refresh(add_like)
+
+    yield add_like
+    db.query(Like).delete()
     db.commit()
     db.close()

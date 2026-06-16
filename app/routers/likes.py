@@ -18,7 +18,7 @@ router = APIRouter(
 
 db_dependency = Annotated [Session, Depends(get_db)]
 jwt_depencency = Annotated[dict, Depends(get_current_user)]
-@router.post("/{post_id}/likes")
+@router.post("/{post_id}/likes", status_code=200)
 def like_post( post_id:int, db: db_dependency, user:jwt_depencency):
     if user is None:
         raise HTTPException( status_code=401, detail="Not authenticated")
@@ -34,7 +34,7 @@ def like_post( post_id:int, db: db_dependency, user:jwt_depencency):
     db.add(new_like)
     db.commit()
     return { "message": "Post liked successfully"} # i might need to add the name of the liked post
-@router.delete("/{post_id}/unlike")
+@router.delete("/{post_id}/unlike", status_code= 200)
 def unlike_post(post_id: int, db: db_dependency, user:jwt_depencency):
     if user is None:
         raise HTTPException( status_code=401, detail="Not authenticated")
