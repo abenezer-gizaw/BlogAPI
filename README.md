@@ -60,7 +60,7 @@ BlogAPI/
 | `/auth/login` | POST | No | Login & get token |
 | `/posts` | GET | No | Get all posts (nested) |
 | `/posts` | POST | Yes | Create post |
-| `/posts/{id}` | GET | No | Get post with comments & likes |
+| `/posts/{id}` | GET | Yes | Get post with comments & likes |
 | `/posts/{id}` | PUT | Yes | Update post |
 | `/posts/{id}` | DELETE | Yes | Delete post |
 | `/comments/{post_id}` | POST | Yes | Add comment |
@@ -313,7 +313,7 @@ python-dotenv==1.2.2
 - Indexes optimize query performance
 
 ## Live Demo:
-- **API Documentation (Swagger):**  https://blogapi-production-7258.up.railway.app
+- **API Documentation (Swagger):**  https://blogapi-production-7258.up.railway.app/docs
 
 ## Author
 
