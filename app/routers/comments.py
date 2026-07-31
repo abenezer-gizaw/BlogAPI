@@ -6,6 +6,7 @@ from ..schemas import CommentCreate, CommentResponse
 from .auth import get_current_user
 from typing import Annotated
 from ..dependecies import rate_limit_dependency
+
 router = APIRouter(prefix="/posts", tags=["Comments"], dependencies=[Depends(rate_limit_dependency)])
 db_dependency = Annotated [Session, Depends(get_db)]
 jwt_depencency = Annotated[dict, Depends(get_current_user)]
