@@ -10,10 +10,11 @@ from ..database import get_db
 from.auth import get_current_user
 from ..models import Like, Post
 from typing import Annotated
+from ..dependecies import rate_limit_dependency
 
 router = APIRouter(
     prefix='/posts',
-    tags=["likes"]
+    tags=["likes"], dependencies=[Depends(rate_limit_dependency)]
 )
 
 db_dependency = Annotated [Session, Depends(get_db)]

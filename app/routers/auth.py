@@ -9,7 +9,7 @@ from passlib.context import CryptContext
 from jose import jwt, JWTError
 from datetime import datetime, timedelta, timezone
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
-
+from ..dependecies import rate_limit_dependency
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -17,7 +17,7 @@ load_dotenv()
 router = APIRouter(
     prefix="/auth",
     tags=['auth']
-)
+, dependencies= [Depends(rate_limit_dependency)])
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM ="HS256"
 
