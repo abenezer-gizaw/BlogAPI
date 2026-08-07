@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models import Comment, Post
-from ..schemas import CommentCreate, CommentResponse
+from ..schemas import CommentCreate, CommentResponse, paginationParams
 from .auth import get_current_user
 from typing import Annotated
 from ..dependecies import rate_limit_dependency
@@ -32,10 +32,13 @@ def create_comment(post_id: int,comment: CommentCreate,db:db_dependency,user:jwt
     return new_comment
 
 @router.get("/{post_id}/comments", response_model=list[CommentResponse], status_code= 200)
-def get_comments(post_id: int, db:db_dependency, user:jwt_depencency):
+def get_comments(pagination:Annotated[paginationParams,Query()], post_id: int, db:db_dependency, user:jwt_depencency):
+
     if user is None:
         raise HTTPException(status_code= 401, detail="User is not authenticated")
-    comments = db.query(Comment).filter(Comment.post_id == post_id).all()
+
+    off_set = (pagination.page-1) * pagination.limit
+    comments = db.query(Comment).filter(Comment.post_id == post_id).offset(off_set).limit(pagination.limit).all()
     return comments
 
 @router.put("/comments/{comment_id}", response_model=CommentResponse, status_code= 200)
