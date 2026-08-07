@@ -5,10 +5,11 @@ from typing import Annotated
 from sqlalchemy.orm import Session, joinedload
 from ..models import User, Post, Like,Comment
 from ..schemas import new_post, PostResponse
+from ..dependecies import rate_limit_dependency
 
 
 router = APIRouter(prefix="/posts",
-                   tags=["posts"])
+                   tags=["posts"], dependencies=[Depends(rate_limit_dependency)])
 db_dependency = Annotated [Session, Depends(get_db)]
 jwt_depencency = Annotated[dict, Depends(get_current_user)]
 
