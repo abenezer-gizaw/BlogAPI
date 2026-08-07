@@ -1,7 +1,4 @@
 venv/
 .env
-<<<<<<< HEAD
 __pycache__
-=======
-__pycache__
->>>>>>> rate_limiting
+app/__pycache__
