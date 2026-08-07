@@ -55,4 +55,4 @@ class PostResponse(BaseModel):
 
 class paginationParams(BaseModel):
     limit : int = Field(default= 2, gt =0, le=100)
-    page : int = Field(default=1, ge=0)
+    page : int = Field(default=1, ge=1)
