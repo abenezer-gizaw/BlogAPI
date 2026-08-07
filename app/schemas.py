@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class new_user(BaseModel):
     first_name:str
@@ -52,3 +52,7 @@ class PostResponse(BaseModel):
     likes_count: int
 
     model_config = {"from_attributes": True}
+
+class paginationParams(BaseModel):
+    limit : int = Field(default= 2, gt =0, le=100)
+    page : int = Field(default=1, ge=0)

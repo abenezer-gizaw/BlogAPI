@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from ..database import get_db
 from .auth import get_current_user
 from typing import Annotated
 from sqlalchemy.orm import Session, joinedload
 from ..models import User, Post, Like,Comment
-from ..schemas import new_post, PostResponse
+from ..schemas import new_post, PostResponse, paginationParams
 from ..dependecies import rate_limit_dependency
 
 
@@ -15,16 +15,18 @@ jwt_depencency = Annotated[dict, Depends(get_current_user)]
 
 @router.get('/all_posts', response_model= list[PostResponse], status_code= 200)
 
-async def all_posts(user: jwt_depencency, db: db_dependency):
+async def all_posts(pagination:Annotated[paginationParams, Query()], user: jwt_depencency, db: db_dependency):
     if user is None:
         raise HTTPException(status_code=401, detail="User is not authenticated.")
+
+    off_set = (pagination.page-1)* pagination.limit
 
     posts = (
         db.query(Post)
         .options(
             joinedload(Post.owner),
             joinedload(Post.comments).joinedload(Comment.user)
-        )
+        ).offset(off_set).limit(pagination.limit)
         .all()
     )
 
