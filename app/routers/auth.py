@@ -18,6 +18,8 @@ router = APIRouter(
     prefix="/auth",
     tags=['auth']
 , dependencies= [Depends(rate_limit_dependency)])
+
+#JWT
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM ="HS256"
 
@@ -31,7 +33,7 @@ def authentication(username:str, password:str, db:db_dependency):
         raise HTTPException(status_code= status.HTTP_404_NOT_FOUND, detail="user doesn't exist")
     verify_result = pwd_context.verify(password, user_model.hashed_password)
     if verify_result is False:
-        raise HTTPException(status_code= status.HTTP_404_NOT_FOUND, detail="user doesn't exist")
+        raise HTTPException(status_code= status.HTTP_404_NOT_FOUND, detail="wrong password")
     return {"username": user_model.username, "id": user_model.id}
 
 def create_jwt_token (data:dict, expires_delta: timedelta): # 3 steps, copy the data from verified user
